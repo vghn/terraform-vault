@@ -23,9 +23,8 @@ data "aws_ami" "vault" {
 
 # DNS
 resource "aws_eip" "vault" {
-  vpc        = true
-  instance   = aws_instance.vault.id
-  depends_on = [module.vpc]
+  vpc      = true
+  instance = aws_instance.vault.id
 
   tags = merge(
     var.common_tags,
