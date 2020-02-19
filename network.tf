@@ -1,23 +1,13 @@
-# Vault VPC
-data "aws_vpc" "main" {
-  id = "${var.vpc_id}"
-}
-
 # Vault Subnets
 data "aws_subnet_ids" "public" {
-  vpc_id = data.aws_vpc.main.id
-}
-
-data "aws_subnet" "vault" {
-  for_each = data.aws_subnet_ids.public.ids
-  id       = each.value
+  vpc_id = var.vpc_id
 }
 
 # Vault Instance Security Group
 resource "aws_security_group" "vault" {
   name        = "Vault"
   description = " Vault Security Group"
-  vpc_id      = data.aws_vpc.main.id
+  vpc_id      = var.vpc_id
 
   tags = var.common_tags
 }
