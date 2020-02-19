@@ -8,6 +8,11 @@ data "aws_subnet_ids" "public" {
   vpc_id = data.aws_vpc.main.id
 }
 
+data "aws_subnet" "vault" {
+  for_each = data.aws_subnet_ids.public.ids
+  id       = each.value
+}
+
 # Vault Instance Security Group
 resource "aws_security_group" "vault" {
   name        = "Vault"
