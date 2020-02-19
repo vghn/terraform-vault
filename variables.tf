@@ -1,3 +1,7 @@
+variable "vpc_id" {
+  description = "VPC ID"
+}
+
 variable "cloudflare_email" {
   description = "CloudFlare EMail"
 }
