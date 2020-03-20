@@ -89,6 +89,7 @@ sudo aws s3 sync --sse aws:kms /root/.acme.sh/ca s3://${aws_s3_bucket.vault.id}/
 sudo aws s3 sync --sse aws:kms /root/.acme.sh/vault.ghn.me s3://${aws_s3_bucket.vault.id}/acme/vault.ghn.me
 
 echo 'Configure Vault Server'
+mkdir -p /data/vault
 cat <<EOF | sudo tee /opt/vault/config/default.hcl
 listener "tcp" {
   address         = "0.0.0.0:8200"
@@ -97,10 +98,9 @@ listener "tcp" {
   tls_key_file    = "/opt/vault/tls/vault.ghn.me.key"
 }
 
-storage "dynamodb" {
-  ha_enabled = "true"
-  region     = "${data.aws_region.current.name}"
-  table      = "${aws_dynamodb_table.vault.id}"
+storage "raft" {
+  path    = "/data/vault"
+  node_id = "vault_node_1"
 }
 
 ui = true
@@ -110,7 +110,7 @@ cluster_addr = "https://vault.ghn.me:8201"
 EOF
 
 echo 'Set Vault Server permissions'
-sudo chown -R vault:vault /opt/vault/tls /opt/vault/config
+sudo chown -R vault:vault /opt/vault/tls /opt/vault/config /data/vault
 
 echo 'Start Vault Server'
 /opt/vault/bin/run-vault --skip-vault-config --tls-cert-file /opt/vault/tls/vault.ghn.me_fullchain.crt --tls-key-file /opt/vault/tls/vault.ghn.me.key
