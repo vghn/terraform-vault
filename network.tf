@@ -5,7 +5,7 @@ data "aws_subnet_ids" "public" {
 
 data "aws_subnet" "public" {
   for_each = data.aws_subnet_ids.public.ids
-  id       = each.value
+  id       = each
 }
 
 locals {
