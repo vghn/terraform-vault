@@ -17,7 +17,7 @@ resource "aws_ebs_volume" "vault_data" {
 resource "aws_volume_attachment" "vault_data_attachment" {
   device_name  = "/dev/sdg"
   instance_id  = aws_instance.vault.id
-  volume_id    = aws_ebs_volume.vault.id
+  volume_id    = aws_ebs_volume.vault_data.id
   skip_destroy = true
 }
 
