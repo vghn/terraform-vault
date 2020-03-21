@@ -3,6 +3,16 @@ data "aws_subnet_ids" "public" {
   vpc_id = var.vpc_id
 }
 
+data "aws_subnet" "public" {
+  count = "${length(data.aws_subnet_ids.public.ids)}"
+  id    = "${data.aws_subnet_ids.public.ids[count.index]}"
+}
+
+locals {
+  subnet_ids_sorted_by_az  = "${values(zipmap(data.aws_subnet.private.*.availability_zone, data.aws_subnet.private.*.id))}"
+  subnet_cidr_sorted_by_az = "${values(zipmap(data.aws_subnet.private.*.availability_zone, data.aws_subnet.private.*.cidr_block))}"
+}
+
 # Vault Instance Security Group
 resource "aws_security_group" "vault" {
   name        = "Vault"

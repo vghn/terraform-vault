@@ -51,7 +51,7 @@ resource "cloudflare_record" "vault" {
 resource "aws_instance" "vault" {
   instance_type               = "t3.micro"
   ami                         = data.aws_ami.vault.id
-  subnet_id                   = sort(data.aws_subnet_ids.public.ids)[0]
+  subnet_id                   = local.subnet_ids_sorted_by_az[0]
   vpc_security_group_ids      = [aws_security_group.vault.id]
   iam_instance_profile        = aws_iam_instance_profile.vault.name
   key_name                    = aws_key_pair.vgh.key_name
