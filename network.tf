@@ -9,8 +9,8 @@ data "aws_subnet" "public" {
 }
 
 locals {
-  subnet_ids_sorted_by_az  = "${values(zipmap(data.aws_subnet.private.*.availability_zone, data.aws_subnet.private.*.id))}"
-  subnet_cidr_sorted_by_az = "${values(zipmap(data.aws_subnet.private.*.availability_zone, data.aws_subnet.private.*.cidr_block))}"
+  subnet_ids_sorted_by_az  = "${values(zipmap(data.aws_subnet.public.*.availability_zone, data.aws_subnet.public.*.id))}"
+  subnet_cidr_sorted_by_az = "${values(zipmap(data.aws_subnet.public.*.availability_zone, data.aws_subnet.public.*.cidr_block))}"
 }
 
 # Vault Instance Security Group
