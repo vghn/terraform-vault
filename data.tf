@@ -1,6 +1,10 @@
 # Vault Data Volume
+data "aws_instance" "vault" {
+  instance_id = aws_instance.vault.id
+}
+
 resource "aws_ebs_volume" "vault_data" {
-  availability_zone = "us-east-1a"
+  availability_zone = data.aws_instance.vault.availability_zone
   type              = "gp2"
   encrypted         = true
   size              = 2
