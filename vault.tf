@@ -74,6 +74,11 @@ sudo apt-get -q -y -o Dpkg::Options::='--force-confdef' -o Dpkg::Options::='--fo
 echo 'Set hostname'
 sudo hostnamectl set-hostname vault.ghn.me
 
+echo 'Mount Data EBS'
+sudo mkdir -p /data
+echo '/dev/nvme1n1  /data  ext4  defaults,nofail  0  2' | sudo tee -a /etc/fstab
+sudo mount -a
+
 echo 'Download LetsEncrypt certificates'
 sudo aws s3 sync --delete --sse aws:kms s3://${aws_s3_bucket.vault.id}/acme/ca /root/.acme.sh/ca || true
 sudo aws s3 sync --delete --sse aws:kms s3://${aws_s3_bucket.vault.id}/acme/vault.ghn.me /root/.acme.sh/vault.ghn.me || true
