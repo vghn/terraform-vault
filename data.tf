@@ -4,7 +4,7 @@ data "aws_instance" "vault" {
 }
 
 resource "aws_ebs_volume" "vault_data" {
-  availability_zone = local.subnet_ids_sorted_by_az[0]
+  availability_zone = data.aws_subnet.primary.availability_zone
   type              = "gp2"
   encrypted         = true
   size              = 2

@@ -3,14 +3,8 @@ data "aws_subnet_ids" "public" {
   vpc_id = var.vpc_id
 }
 
-data "aws_subnet" "public" {
-  for_each = data.aws_subnet_ids.public.ids
-  id       = each
-}
-
-locals {
-  subnet_ids_sorted_by_az  = "${values(zipmap(data.aws_subnet.public.*.availability_zone, data.aws_subnet.public.*.id))}"
-  subnet_cidr_sorted_by_az = "${values(zipmap(data.aws_subnet.public.*.availability_zone, data.aws_subnet.public.*.cidr_block))}"
+data "aws_subnet" "primary" {
+  id = sort(data.aws_subnet_ids.public.ids)[0]
 }
 
 # Vault Instance Security Group
