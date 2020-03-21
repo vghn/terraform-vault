@@ -4,8 +4,8 @@ data "aws_subnet_ids" "public" {
 }
 
 data "aws_subnet" "public" {
-  count = "${length(data.aws_subnet_ids.public.ids)}"
-  id    = "${data.aws_subnet_ids.public.ids[count.index]}"
+  for_each = data.aws_subnet_ids.public.ids
+  id       = each.value
 }
 
 locals {
