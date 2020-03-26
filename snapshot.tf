@@ -55,6 +55,10 @@ resource "aws_dlm_lifecycle_policy" "vault" {
   policy_details {
     resource_types = ["VOLUME"]
 
+    target_tags = {
+      Snapshot = "true"
+    }
+
     schedule {
       name = "2 weeks of daily snapshots"
 
@@ -73,10 +77,6 @@ resource "aws_dlm_lifecycle_policy" "vault" {
       }
 
       copy_tags = true
-    }
-
-    target_tags = {
-      Snapshot = "true"
     }
   }
 }
