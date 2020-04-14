@@ -14,10 +14,6 @@ variable "cloudflare_zone_id" {
   description = "CloudFlare Zone ID"
 }
 
-variable "monitoring_ip" {
-  description = "Monitoring IP Address"
-}
-
 variable "common_tags" {
   description = "Tags that should be applied to all resources"
   type        = map(string)
