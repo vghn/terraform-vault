@@ -66,26 +66,26 @@ IFS=$'\n\t'
 # From: https://alestic.com/2010/12/ec2-user-data-output/
 exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
 
-echo 'Update System'
+echo '*** Update System'
 export DEBIAN_FRONTEND=noninteractive
-while ! apt-get -y update; do sleep 1; done
+while ! sudo apt-get -y update; do sleep 1; done
 sudo apt-get -q -y -o Dpkg::Options::='--force-confdef' -o Dpkg::Options::='--force-confold' --allow-remove-essential upgrade
 
-echo 'Set hostname'
+echo '*** Set hostname'
 sudo hostnamectl set-hostname vault.ghn.me
 
-echo 'Mount Data EBS'
+echo '*** Mount Data EBS'
 sudo mkdir -p /data
 echo '/dev/nvme1n1  /data  ext4  defaults,nofail  0  2' | sudo tee -a /etc/fstab
 sudo mount -a
 
-echo 'Generate/Renew LetsEncrypt certificates'
+echo '*** Generate/Renew LetsEncrypt certificates'
 export CF_Email="${var.cloudflare_email}"
 export CF_Key="${var.cloudflare_api_key}"
 sudo -E su -c '/root/.acme.sh/acme.sh --issue --config-home /data/acme --dns dns_cf --domain vault.ghn.me || true'
 sudo -E su -c '/root/.acme.sh/acme.sh --install-cert --config-home /data/acme --domain vault.ghn.me --cert-file /opt/vault/tls/vault.ghn.me.crt --key-file /opt/vault/tls/vault.ghn.me.key --fullchain-file /opt/vault/tls/vault.ghn.me.fullchain.crt || true'
 
-echo 'Configure Vault Server'
+echo '*** Configure Vault Server'
 mkdir -p /data/vault
 cat <<EOF | sudo tee /opt/vault/config/default.hcl
 listener "tcp" {
@@ -106,10 +106,10 @@ api_addr     = "https://vault.ghn.me:8200"
 cluster_addr = "https://vault.ghn.me:8201"
 EOF
 
-echo 'Set Vault Server permissions'
+echo '*** Set Vault Server permissions'
 sudo chown -R vault:vault /opt/vault/tls /opt/vault/config /data/vault
 
-echo 'Start Vault Server'
+echo '*** Start Vault Server'
 /opt/vault/bin/run-vault --skip-vault-config --tls-cert-file /opt/vault/tls/vault.ghn.me_fullchain.crt --tls-key-file /opt/vault/tls/vault.ghn.me.key
 
 echo "FINISHED @ $(date "+%m-%d-%Y %T")" | sudo tee /var/lib/cloud/instance/deployed
