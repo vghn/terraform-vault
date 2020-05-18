@@ -7,6 +7,11 @@ data "aws_subnet" "primary" {
   id = sort(data.aws_subnet_ids.public.ids)[0]
 }
 
+# Allowed IPs
+data "dns_a_record_set" "home" {
+  host = "home.ghn.me"
+}
+
 # Vault Instance Security Group
 resource "aws_security_group" "vault" {
   name        = "Vault"
@@ -14,6 +19,15 @@ resource "aws_security_group" "vault" {
   vpc_id      = var.vpc_id
 
   tags = var.common_tags
+}
+
+resource "aws_security_group_rule" "vault_ssh" {
+  type              = "ingress"
+  from_port         = 22
+  to_port           = 22
+  protocol          = "tcp"
+  security_group_id = aws_security_group.vault.id
+  cidr_blocks       = formatlist("%s/32", data.dns_a_record_set.home.addrs)
 }
 
 resource "aws_security_group_rule" "vault_server" {
