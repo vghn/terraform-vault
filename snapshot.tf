@@ -47,7 +47,7 @@ data "aws_iam_policy_document" "dlm_lifecycle" {
   }
 }
 
-resource "aws_dlm_lifecycle_policy" "vault" {
+resource "aws_dlm_lifecycle_policy" "backup" {
   description        = "Vauilt DLM lifecycle policy"
   execution_role_arn = aws_iam_role.dlm_lifecycle_role.arn
   state              = "ENABLED"
@@ -60,7 +60,7 @@ resource "aws_dlm_lifecycle_policy" "vault" {
     }
 
     schedule {
-      name = "2 weeks of daily snapshots"
+      name = "1 week of daily snapshots"
 
       create_rule {
         interval      = 24
@@ -69,7 +69,7 @@ resource "aws_dlm_lifecycle_policy" "vault" {
       }
 
       retain_rule {
-        count = 14
+        count = 7
       }
 
       tags_to_add = {
