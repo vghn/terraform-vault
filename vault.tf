@@ -68,8 +68,8 @@ exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
 
 echo '*** Update System'
 export DEBIAN_FRONTEND=noninteractive
-while ! sudo apt-get -y update; do sleep 1; done
-sudo apt-get -q -y -o Dpkg::Options::='--force-confdef' -o Dpkg::Options::='--force-confold' --allow-remove-essential upgrade
+sudo apt-get -y update
+sudo apt-get -y -o Dpkg::Options::='--force-confdef' -o Dpkg::Options::='--force-confold' --allow-remove-essential upgrade
 
 echo '*** Set hostname'
 sudo hostnamectl set-hostname vault.ghn.me
