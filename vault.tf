@@ -82,8 +82,8 @@ sudo mount -a
 echo 'Generate/Renew LetsEncrypt certificates'
 export CF_Email="${var.cloudflare_email}"
 export CF_Key="${var.cloudflare_api_key}"
-sudo -E su -c '/data/acme/acme.sh --issue --home /data/acme --dns dns_cf --domain vault.ghn.me || true'
-sudo -E su -c '/data/acme/acme.sh --install-cert --home /data/acme --domain vault.ghn.me --cert-file /opt/vault/tls/vault.ghn.me.crt --key-file /opt/vault/tls/vault.ghn.me.key --fullchain-file /opt/vault/tls/vault.ghn.me.fullchain.crt || true'
+sudo -E su -c '/root/.acme.sh/acme.sh --issue --config-home /data/acme --dns dns_cf --domain vault.ghn.me || true'
+sudo -E su -c '/root/.acme.sh/acme.sh --install-cert --config-home /data/acme --domain vault.ghn.me --cert-file /opt/vault/tls/vault.ghn.me.crt --key-file /opt/vault/tls/vault.ghn.me.key --fullchain-file /opt/vault/tls/vault.ghn.me.fullchain.crt || true'
 
 echo 'Configure Vault Server'
 mkdir -p /data/vault
