@@ -48,7 +48,7 @@ data "aws_iam_policy_document" "dlm_lifecycle" {
 }
 
 resource "aws_dlm_lifecycle_policy" "backup" {
-  description        = "Vauilt DLM lifecycle policy"
+  description        = "DLM lifecycle policy"
   execution_role_arn = aws_iam_role.dlm_lifecycle_role.arn
   state              = "ENABLED"
 
