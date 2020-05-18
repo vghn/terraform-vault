@@ -79,19 +79,11 @@ sudo mkdir -p /data
 echo '/dev/nvme1n1  /data  ext4  defaults,nofail  0  2' | sudo tee -a /etc/fstab
 sudo mount -a
 
-echo 'Download LetsEncrypt certificates'
-sudo aws s3 sync --delete --sse aws:kms s3://${aws_s3_bucket.vault.id}/acme/ca /root/.acme.sh/ca || true
-sudo aws s3 sync --delete --sse aws:kms s3://${aws_s3_bucket.vault.id}/acme/vault.ghn.me /root/.acme.sh/vault.ghn.me || true
-
 echo 'Generate/Renew LetsEncrypt certificates'
 export CF_Email="${var.cloudflare_email}"
 export CF_Key="${var.cloudflare_api_key}"
-sudo -E su -c '/root/.acme.sh/acme.sh --issue --dns dns_cf -d vault.ghn.me || true'
-sudo -E su -c '/root/.acme.sh/acme.sh --install-cert -d vault.ghn.me --cert-file /opt/vault/tls/vault.ghn.me.crt --key-file /opt/vault/tls/vault.ghn.me.key --fullchain-file /opt/vault/tls/vault.ghn.me.fullchain.crt'
-
-echo 'Upload LetsEncrypt certificates'
-sudo aws s3 sync --sse aws:kms /root/.acme.sh/ca s3://${aws_s3_bucket.vault.id}/acme/ca
-sudo aws s3 sync --sse aws:kms /root/.acme.sh/vault.ghn.me s3://${aws_s3_bucket.vault.id}/acme/vault.ghn.me
+sudo -E su -c '/data/acme/acme.sh --issue --home /data/acme --dns dns_cf --domain vault.ghn.me || true'
+sudo -E su -c '/data/acme/acme.sh --install-cert --home /data/acme --domain vault.ghn.me --cert-file /opt/vault/tls/vault.ghn.me.crt --key-file /opt/vault/tls/vault.ghn.me.key --fullchain-file /opt/vault/tls/vault.ghn.me.fullchain.crt || true'
 
 echo 'Configure Vault Server'
 mkdir -p /data/vault
