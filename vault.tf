@@ -67,6 +67,7 @@ IFS=$'\n\t'
 exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
 
 echo '*** Wait for other APT processes to finish'
+# Because daily apt download activities are run at boot
 while sudo fuser /var/{lib/{dpkg,apt/lists},cache/apt/archives}/lock >/dev/null 2>&1; do
   sleep 1
 done
